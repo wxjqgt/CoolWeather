@@ -7,6 +7,7 @@ package com.weibo.coolweather;
 public interface Constant {
 
     String WEATHER_API_URL = "http://guolin.tech/api";
+    String KEY = "55725f617c3b41788c138e29270d328c";
 
     //中国所有的省份名称及ID
     String PROVINCE_URL = WEATHER_API_URL + "/china";
