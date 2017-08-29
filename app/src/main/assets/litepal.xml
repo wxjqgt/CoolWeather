@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
-    <dbname value = "CoolWeather"></dbname>
+    <dbname value = "cool_weather"></dbname>
     <version value = "1"></version>
     <list>
-
+        <mapping class="com.weibo.coolweather.model.db.Province"/>
+        <mapping class="com.weibo.coolweather.model.db.City"/>
+        <mapping class="com.weibo.coolweather.model.db.County"/>
     </list>
 </litepal>

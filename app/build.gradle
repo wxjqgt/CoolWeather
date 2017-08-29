@@ -50,4 +50,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     //litepal
     implementation 'org.litepal.android:core:1.6.0'
+    //dagger2
+    compile 'com.google.dagger:dagger-android:2.11'
+    compile 'com.google.dagger:dagger-android-support:2.11'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.11'
 }
