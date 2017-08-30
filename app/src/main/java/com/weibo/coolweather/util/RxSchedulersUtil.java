@@ -1,7 +1,5 @@
 package com.weibo.coolweather.util;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -12,15 +10,12 @@ import io.reactivex.schedulers.Schedulers;
 
 public final class RxSchedulersUtil {
 
-    private static ObservableTransformer transformer = new ObservableTransformer() {
-        @Override
-        public ObservableSource apply(Observable upstream) {
-            return upstream.subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread());
-        }
-    };
+    private static ObservableTransformer transformer =
+            upstream ->
+                    upstream.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread());
 
-    public static <T> ObservableTransformer<T,T> ioToMain(){
+    public static <T> ObservableTransformer<T, T> ioToMain() {
         return transformer;
     }
 

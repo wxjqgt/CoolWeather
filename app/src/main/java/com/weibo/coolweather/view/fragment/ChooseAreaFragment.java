@@ -8,11 +8,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.trello.rxlifecycle2.android.FragmentEvent;
+import com.weibo.coolweather.Constant;
 import com.weibo.coolweather.R;
 import com.weibo.coolweather.adapter.listview.CommonAdapter;
 import com.weibo.coolweather.adapter.listview.ViewHolder;
 import com.weibo.coolweather.model.Area;
 import com.weibo.coolweather.model.db.City;
+import com.weibo.coolweather.model.db.County;
 import com.weibo.coolweather.model.db.Province;
 import com.weibo.coolweather.presenter.BasePresenter;
 import com.weibo.coolweather.presenter.ChooseAreaPresenterImp;
@@ -57,7 +59,33 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
 
     @Override
     public void loadProvinceData(List<Province> provinceList) {
+        backButton.setVisibility(View.GONE);
         titleText.setText("中国");
+        currentLevel = Constant.AREA_LEVEL.LEVEL_PROVINCE;
+        if (adapter == null) {
+            createAdapter(provinceList);
+        } else {
+            adapter.addData(ModelUtil.convert(provinceList));
+        }
+    }
+
+    @Override
+    public void loadCityData(List<City> provinceList) {
+
+    }
+
+    @Override
+    public void loadCountyData(List<County> provinceList) {
+
+    }
+
+    @OnItemClick(R.id.listView)
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+    }
+
+    private void createAdapter(List<Province> provinceList) {
         adapter = new CommonAdapter<Area>(
                 context,
                 R.layout.choose_area_item,
@@ -69,10 +97,6 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
             }
         };
         listView.setAdapter(adapter);
-    }
-
-    @OnItemClick(R.id.listView)
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
     }
 

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,8 @@ public abstract class CommonAdapter<T> extends BaseAdapter {
     private int layoutId;
 
     public CommonAdapter(Context context, int layoutId, List<T> dataList) {
-        this.dataList = dataList;
+        this.dataList = new ArrayList<>();
+        this.dataList.addAll(dataList);
         this.context = context;
         this.layoutId = layoutId;
     }
@@ -52,6 +54,11 @@ public abstract class CommonAdapter<T> extends BaseAdapter {
         }
         convert(holder,dataList.get(position),position);
         return view;
+    }
+
+    public void addData(List<T> list){
+        dataList.addAll(list);
+        notifyDataSetChanged();
     }
 
     public abstract void convert(ViewHolder holder, T item, int position);

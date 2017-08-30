@@ -40,7 +40,6 @@ public class ChooseAreaPresenterImp implements ChooseAreaContract.ChooseAreaPres
 
     @Override
     public void queryProvince() {
-
         Observable.just(DataSupport.findAll(Province.class))
                 .flatMap(provinceList -> {
                     if (provinceList != null && provinceList.size() > 0) {
@@ -60,6 +59,16 @@ public class ChooseAreaPresenterImp implements ChooseAreaContract.ChooseAreaPres
                     provinceList = provinces;
                     chooseAreaView.loadProvinceData(provinceList);
                 });
+    }
+
+    @Override
+    public void queryCity() {
+
+    }
+
+    @Override
+    public void queryCounty() {
+
     }
 
 }
