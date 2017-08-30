@@ -1,24 +1,16 @@
 package com.weibo.coolweather.model.db;
 
-import org.litepal.crud.DataSupport;
+import com.weibo.coolweather.model.Area;
 
 /**
  * Created by weixj on 2017/8/29.
  */
 
-public class City extends DataSupport {
+public class City extends Area{
 
-    private int id;
     private String cityName;
     private int cityCode;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    private int provinceId;
 
     public String getCityName() {
         return cityName;
@@ -44,6 +36,5 @@ public class City extends DataSupport {
         this.provinceId = provinceId;
     }
 
-    private int provinceId;
 
 }

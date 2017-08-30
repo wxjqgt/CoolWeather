@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+//apply plugin: 'com.jakewharton.butterknife'
 
 android {
     compileSdkVersion 25
@@ -16,6 +17,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -35,9 +40,8 @@ dependencies {
     implementation 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:2.0.0'
     implementation 'com.jakewharton.rxbinding2:rxbinding-leanback-v17:2.0.0'
     //rxlifecycle2
-    implementation 'com.trello.rxlifecycle2:rxlifecycle:2.1.0'
-    implementation 'com.trello.rxlifecycle2:rxlifecycle-android:2.1.0'
     implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.1.0'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-android-lifecycle:2.1.0'
     //logger
     implementation 'com.orhanobut:logger:2.1.1'
     //picasso

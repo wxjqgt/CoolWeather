@@ -1,13 +1,19 @@
 package com.weibo.coolweather.view.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.trello.rxlifecycle2.android.FragmentEvent;
+
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Created by weixj on 2017/8/26.
@@ -16,6 +22,10 @@ import android.view.ViewGroup;
 public abstract class BaseFragment extends Fragment {
 
     protected View view;
+    protected Context context;
+    private Unbinder unbinder;
+
+    protected final BehaviorSubject<FragmentEvent> lifecycleSubject = BehaviorSubject.create();
 
     public BaseFragment() {}
 
@@ -23,9 +33,17 @@ public abstract class BaseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(getLayoutId(), container, false);
-        initView();
+        unbinder = ButterKnife.bind(this,view);
         return view;
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        listener();
+    }
+
+    protected void listener(){}
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -36,6 +54,12 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && view != null) {
@@ -43,7 +67,10 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-    protected void initView() {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 
     protected void loadData() {
@@ -51,8 +78,5 @@ public abstract class BaseFragment extends Fragment {
 
     @LayoutRes protected abstract int getLayoutId();
 
-    protected <T extends View> T findView(@IdRes int id) {
-        return (T) view.findViewById(id);
-    }
 
 }
