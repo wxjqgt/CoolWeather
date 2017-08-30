@@ -1,26 +1,21 @@
 package com.weibo.coolweather.presenter;
 
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import com.orhanobut.logger.Logger;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 import com.trello.rxlifecycle2.android.RxLifecycleAndroid;
-import com.weibo.coolweather.Constant;
 import com.weibo.coolweather.api.ProvinceApi;
 import com.weibo.coolweather.model.db.City;
 import com.weibo.coolweather.model.db.County;
 import com.weibo.coolweather.model.db.Province;
 import com.weibo.coolweather.presenter.contract.ChooseAreaContract;
+import com.weibo.coolweather.util.RetrofitUtil;
+import com.weibo.coolweather.util.RxSchedulersUtil;
 
 import org.litepal.crud.DataSupport;
 
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by weixj on 2017/8/30.
@@ -45,27 +40,25 @@ public class ChooseAreaPresenterImp implements ChooseAreaContract.ChooseAreaPres
 
     @Override
     public void queryProvince() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(Constant.URL.WEATHER_API_URL)
-                .build();
+
         Observable.just(DataSupport.findAll(Province.class))
                 .flatMap(provinceList -> {
-                    Logger.d(provinceList);
                     if (provinceList != null && provinceList.size() > 0) {
                         return Observable.fromArray(provinceList);
                     } else {
-                        return retrofit.create(ProvinceApi.class).queryPorvince();
+                        return RetrofitUtil.create(ProvinceApi.class)
+                                .queryPorvince()
+                                .flatMap(provinceList1 -> {
+                                    DataSupport.saveAllAsync(provinceList1);
+                                    return Observable.fromArray(provinceList1);
+                                });
                     }
                 })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxSchedulersUtil.ioToMain())
                 .compose(RxLifecycleAndroid.bindFragment(subject))
                 .subscribe(provinces -> {
                     provinceList = provinces;
                     chooseAreaView.loadProvinceData(provinceList);
-                    DataSupport.saveAllAsync(provinces);
                 });
     }
 
