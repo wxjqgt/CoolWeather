@@ -28,12 +28,12 @@ public abstract class CommonAdapter<T> extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return dataList.size() != 0 ? dataList.size() : 0;
+        return dataList.size();
     }
 
     @Override
     public T getItem(int position) {
-        return dataList.get(position) != null ? dataList.get(position) : null;
+        return dataList.get(position);
     }
 
     @Override
@@ -43,22 +43,27 @@ public abstract class CommonAdapter<T> extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
         ViewHolder holder = null;
-        if (view == null){
-            view = LayoutInflater.from(context).inflate(layoutId,parent,false);
+        View view = convertView;
+        if (view == null) {
+            view = LayoutInflater.from(context).inflate(layoutId, parent, false);
             holder = new ViewHolder(view);
             view.setTag(holder);
-        }else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
-        convert(holder,dataList.get(position),position);
+        convert(holder, dataList.get(position), position);
         return view;
     }
 
-    public void addData(List<T> list){
+    public void addData(List<T> list) {
         dataList.addAll(list);
         notifyDataSetChanged();
+    }
+
+    public void setData(List<T> dataList) {
+        this.dataList.clear();
+        addData(dataList);
     }
 
     public abstract void convert(ViewHolder holder, T item, int position);

@@ -22,9 +22,14 @@ public abstract class CommonAdapter<T> extends RecyclerView.Adapter<ViewHolder>{
         this.LayoutId = LayoutId;
     }
 
-    public void addDatas(List<T> data){
-        datas.addAll(data);
+    public void addDatas(List<T> datas){
+        this.datas.addAll(datas);
         this.notifyDataSetChanged();
+    }
+
+    public void setDatas(List<T> datas){
+        this.datas.clear();
+        addDatas(datas);
     }
 
     @Override

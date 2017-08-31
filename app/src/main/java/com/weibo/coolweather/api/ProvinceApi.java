@@ -14,5 +14,5 @@ import retrofit2.http.GET;
 
 public interface ProvinceApi {
     @GET(Constant.URL.PROVINCE_URL)
-    Observable<List<Province>> queryPorvince();
+    Observable<List<Province>> query();
 }

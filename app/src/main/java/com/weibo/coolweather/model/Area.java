@@ -7,6 +7,7 @@ import org.litepal.crud.DataSupport;
  */
 
 public class Area extends DataSupport{
+
     private String name;
     private int id;
 
@@ -24,5 +25,13 @@ public class Area extends DataSupport{
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Area{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                '}';
     }
 }

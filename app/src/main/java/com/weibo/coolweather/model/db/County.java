@@ -9,8 +9,16 @@ import com.weibo.coolweather.model.Area;
 public class County extends Area {
 
     private String countyName;
-    private String weatherId;
-    private int cityId;
+    private String weather_id;
+    private int cityid;
+
+    public String getWeather_id() {
+        return weather_id;
+    }
+
+    public void setWeather_id(String weather_id) {
+        this.weather_id = weather_id;
+    }
 
     public String getCountyName() {
         return countyName;
@@ -20,19 +28,11 @@ public class County extends Area {
         this.countyName = countyName;
     }
 
-    public String getWeatherId() {
-        return weatherId;
-    }
-
-    public void setWeatherId(String weatherId) {
-        this.weatherId = weatherId;
-    }
-
     public int getCityId() {
-        return cityId;
+        return cityid;
     }
 
     public void setCityId(int cityId) {
-        this.cityId = cityId;
+        this.cityid = cityId;
     }
 }

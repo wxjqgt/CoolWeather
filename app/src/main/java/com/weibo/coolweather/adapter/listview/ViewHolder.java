@@ -22,7 +22,7 @@ public class ViewHolder {
         View view = viewList.get(viewId);
         if (view == null){
             view = convertView.findViewById(viewId);
-            viewList.append(viewId,view);
+            viewList.put(viewId,view);
         }
         return (T) view;
     }

@@ -39,14 +39,16 @@ public class ItemCallback<T> extends ItemTouchHelper.Callback {
 
     @Override
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-        /*if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+        /*
+        if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
             viewHolder.itemView.setBackgroundColor(Color.LTGRAY);
             Vibrator vibrator = (Vibrator) MainApp.getContext()
                     .getSystemService(Context.VIBRATOR_SERVICE);
             //震动100毫秒
             vibrator.vibrate(100);
         }
-        */
+         */
+
         super.onSelectedChanged(viewHolder, actionState);
     }
 
