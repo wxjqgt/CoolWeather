@@ -40,6 +40,7 @@ public abstract class BaseFragment extends Fragment implements LifecycleProvider
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        initView();
         listener();
     }
 
@@ -59,6 +60,7 @@ public abstract class BaseFragment extends Fragment implements LifecycleProvider
         }
     }
 
+    protected void initView(){}
     protected void loadData() {}
     protected void listener(){}
 

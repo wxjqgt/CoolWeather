@@ -57,13 +57,17 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
     private ChooseAreaContract.ChooseAreaPresenter chooseAreaPresenter;
 
     @Override
-    protected void loadData() {
-        new ChooseAreaPresenterImp(this);
+    protected void initView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+    }
+
+    @Override
+    protected void loadData() {
+        new ChooseAreaPresenterImp(this);
         chooseAreaPresenter.queryProvince();
     }
 
