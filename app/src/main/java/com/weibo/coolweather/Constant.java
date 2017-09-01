@@ -19,6 +19,7 @@ public final class Constant {
         //查询指定城市的所有县区，即在CITY_URL后面加上城市ID
         //String COUNTY_AREA_URL = CITY_URL + "/116";
 
+        //查询指定县区的天气
         //String WEATHER_URL = WEATHER_API_URL + "/weather?cityid=县区的weatherid&key=申请key";
     }
 

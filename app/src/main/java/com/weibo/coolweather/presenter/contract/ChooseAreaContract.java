@@ -25,6 +25,8 @@ public class ChooseAreaContract {
 
         void loadCountyData(List<County> countyList);
 
+        void loadWeatherData();
+
         BehaviorSubject<FragmentEvent> getLifecycle();
     }
 

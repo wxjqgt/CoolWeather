@@ -43,7 +43,7 @@ public class ChooseAreaPresenterImp implements ChooseAreaContract.ChooseAreaPres
                     } else {
                         return RetrofitUtil.create(ProvinceApi.class)
                                 .query()
-                                .map(provinceList12 -> ModelUtil.addProvinceCodeAndName(provinceList12))
+                                .map(provinceList12 -> ModelUtil.addProvinceCodeAndNameToProvince(provinceList12))
                                 .flatMap(provinceList1 -> {
                                     DataSupport.saveAll(provinceList1);
                                     return Observable.fromArray(provinceList1);
@@ -96,7 +96,6 @@ public class ChooseAreaPresenterImp implements ChooseAreaContract.ChooseAreaPres
                         .find(County.class)
         )
                 .flatMap(cityList -> {
-                    Logger.i("" + provinceId + "+" + cityId);
                     if (cityList != null && cityList.size() > 0) {
                         return Observable.fromArray(cityList);
                     } else {

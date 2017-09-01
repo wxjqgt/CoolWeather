@@ -22,7 +22,7 @@ public final class ModelUtil {
         return areaList;
     }
 
-    public static List<Province> addProvinceCodeAndName(List<Province> provinces) {
+    public static List<Province> addProvinceCodeAndNameToProvince(List<Province> provinces) {
         List<Province> provinceList = new ArrayList<>();
         for (Province province : provinces) {
             province.setProvinceCode(province.getId());
@@ -41,7 +41,7 @@ public final class ModelUtil {
         return areaList;
     }
 
-    public static List<City> addProvinceIdToCity(int provinceId,List<City> citys) {
+    public static List<City> addProvinceIdToCity(int provinceId, List<City> citys) {
         List<City> cityList = new ArrayList<>();
         for (City city : citys) {
             city.setCityCode(city.getId());
@@ -61,7 +61,7 @@ public final class ModelUtil {
     }
 
 
-    public static List<County> addCityIdToCounty(int cityId,List<County> countys) {
+    public static List<County> addCityIdToCounty(int cityId, List<County> countys) {
         List<County> countyList = new ArrayList<>();
         for (County county : countys) {
             county.setCityId(cityId);
