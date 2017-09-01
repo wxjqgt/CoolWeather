@@ -1,5 +1,8 @@
 package com.weibo.coolweather.view.fragment;
 
+import android.content.Intent;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +25,8 @@ import com.weibo.coolweather.presenter.BasePresenter;
 import com.weibo.coolweather.presenter.ChooseAreaPresenterImp;
 import com.weibo.coolweather.presenter.contract.ChooseAreaContract;
 import com.weibo.coolweather.util.ModelUtil;
+import com.weibo.coolweather.view.activity.MainActivity;
+import com.weibo.coolweather.view.activity.WeatherActivity;
 
 import java.util.List;
 
@@ -35,6 +40,8 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContract.ChooseAreaView {
 
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
     @BindView(R.id.title_text)
     TextView titleText;
     @BindView(R.id.back_button)
@@ -47,9 +54,10 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
     private List<Province> provinceList;
     //市列表
     private List<City> cityList;
+    //县列表
     private List<County> countyList;
     //当前选中的级别
-    private int currentLevel;
+    private Constant.AREA_LEVEL currentLevel;
     private int currentProvinceId;
     private int currrentSelectProvincePosition;
     private int currrentSelectCityPosition;
@@ -117,7 +125,7 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
                 }
                 int position = viewHolder.getAdapterPosition();
                 switch (currentLevel) {
-                    case Constant.AREA_LEVEL.LEVEL_PROVINCE:
+                    case LEVEL_PROVINCE:
                         adapter.clear();
                         Province province = provinceList.get(position);
                         chooseAreaPresenter.queryCity(province.getId());
@@ -128,7 +136,7 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
                         currentLevel = Constant.AREA_LEVEL.LEVEL_CITY;
 
                         break;
-                    case Constant.AREA_LEVEL.LEVEL_CITY:
+                    case LEVEL_CITY:
                         adapter.clear();
                         City city = cityList.get(position);
                         chooseAreaPresenter.queryCounty(city.getProvinceId(), city.getCityCode());
@@ -138,8 +146,12 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
 
                         break;
 
-                    case Constant.AREA_LEVEL.LEVEL_COUNTY:
-                        //County county = countyList.get(position);
+                    case LEVEL_COUNTY:
+                        County county = countyList.get(position);
+                        Intent intent = new Intent(context, WeatherActivity.class);
+                        intent.putExtra(Constant.WEATHER_ID,county.getWeather_id());
+                        startActivity(intent);
+                        ((MainActivity)context).finish();
 
                         break;
                     default:
@@ -155,13 +167,13 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
     @OnClick(R.id.back_button)
     public void onClick(View view) {
         switch (currentLevel) {
-            case Constant.AREA_LEVEL.LEVEL_CITY:
+            case LEVEL_CITY:
                 backButton.setVisibility(View.GONE);
                 chooseAreaPresenter.queryProvince();
                 currentLevel = Constant.AREA_LEVEL.LEVEL_PROVINCE;
 
                 break;
-            case Constant.AREA_LEVEL.LEVEL_COUNTY:
+            case LEVEL_COUNTY:
                 titleText.setText(currentSelectProvinceName);
                 chooseAreaPresenter.queryCity(currentProvinceId);
                 currentLevel = Constant.AREA_LEVEL.LEVEL_CITY;
@@ -179,6 +191,13 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
             }
         };
         recyclerView.setAdapter(adapter);
+
+    }
+
+    @Override
+    public void networkErrorView() {
+
+        Snackbar.make(coordinatorLayout,"当前网络不通！",Snackbar.LENGTH_LONG).show();
 
     }
 

@@ -6,7 +6,7 @@ import com.weibo.coolweather.model.Area;
  * Created by weixj on 2017/8/29.
  */
 
-public class County extends Area {
+public class County extends Area{
 
     private String countyName;
     private String weather_id;

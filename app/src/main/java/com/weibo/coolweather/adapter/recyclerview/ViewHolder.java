@@ -3,10 +3,7 @@ package com.weibo.coolweather.adapter.recyclerview;
 import android.content.Context;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -21,17 +18,12 @@ public class ViewHolder extends RecyclerView.ViewHolder {
 
     public ViewHolder(View itemView, Context context) {
         super(itemView);
-        this.itemView = itemView;
         this.context = context;
+        this.itemView = itemView;
     }
 
     public static ViewHolder createViewHolder(Context context, View itemView) {
         return (new ViewHolder(itemView, context));
-    }
-
-    public static ViewHolder createViewHolder(Context context, int LaoutId, ViewGroup parent) {
-        View view = LayoutInflater.from(context).inflate(LaoutId, parent, false);
-        return (new ViewHolder(view, context));
     }
 
     public <T extends View> T getView(int id) {
@@ -45,10 +37,6 @@ public class ViewHolder extends RecyclerView.ViewHolder {
 
     public void setText(int id, String text) {
         ((TextView) getView(id)).setText(text);
-    }
-
-    public void setImage(int id, int res) {
-        ((ImageView) getView(id)).setImageResource(res);
     }
 
 }

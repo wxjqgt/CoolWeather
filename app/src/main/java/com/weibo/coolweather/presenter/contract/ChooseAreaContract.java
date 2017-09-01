@@ -27,6 +27,8 @@ public class ChooseAreaContract {
 
         void loadWeatherData();
 
+        void networkErrorView();
+
         BehaviorSubject<FragmentEvent> getLifecycle();
     }
 

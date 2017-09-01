@@ -6,6 +6,4 @@ package com.weibo.coolweather.presenter;
 
 public interface BasePresenter {
 
-
-
 }
