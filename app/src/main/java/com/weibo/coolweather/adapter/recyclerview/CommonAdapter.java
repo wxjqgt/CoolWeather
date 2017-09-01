@@ -32,6 +32,11 @@ public abstract class CommonAdapter<T> extends RecyclerView.Adapter<ViewHolder>{
         addDatas(datas);
     }
 
+    public void clear(){
+        this.datas.clear();
+        notifyDataSetChanged();
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return ViewHolder.createViewHolder(context, LayoutInflater.from(context).inflate(LayoutId,parent,false));

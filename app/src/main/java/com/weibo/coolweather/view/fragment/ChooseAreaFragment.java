@@ -118,6 +118,7 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
                 int position = viewHolder.getAdapterPosition();
                 switch (currentLevel) {
                     case Constant.AREA_LEVEL.LEVEL_PROVINCE:
+                        adapter.clear();
                         Province province = provinceList.get(position);
                         chooseAreaPresenter.queryCity(province.getId());
                         title = province.getName();
@@ -128,6 +129,7 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
 
                         break;
                     case Constant.AREA_LEVEL.LEVEL_CITY:
+                        adapter.clear();
                         City city = cityList.get(position);
                         chooseAreaPresenter.queryCounty(city.getProvinceId(), city.getCityCode());
                         title = city.getName();
