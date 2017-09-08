@@ -6,11 +6,13 @@ import com.trello.rxlifecycle2.android.RxLifecycleAndroid;
 import com.weibo.coolweather.api.CityApi;
 import com.weibo.coolweather.api.CountyApi;
 import com.weibo.coolweather.api.ProvinceApi;
+import com.weibo.coolweather.app.CoolWeatherApp;
 import com.weibo.coolweather.model.db.City;
 import com.weibo.coolweather.model.db.County;
 import com.weibo.coolweather.model.db.Province;
 import com.weibo.coolweather.presenter.contract.ChooseAreaContract;
 import com.weibo.coolweather.util.ModelUtil;
+import com.weibo.coolweather.util.NetWorkUtil;
 import com.weibo.coolweather.util.RetrofitUtil;
 import com.weibo.coolweather.util.RxSchedulersUtil;
 
@@ -38,23 +40,29 @@ public class ChooseAreaPresenterImp implements ChooseAreaContract.ChooseAreaPres
     public void queryProvince() {
         Observable.just(DataSupport.findAll(Province.class))
                 .flatMap(provinceList -> {
-                    if (provinceList != null && provinceList.size() > 0) {
-                        return Observable.fromArray(provinceList);
-                    } else {
-                        return RetrofitUtil.create(ProvinceApi.class)
-                                .query()
-                                .map(provinceList12 -> ModelUtil.addProvinceCodeAndName(provinceList12))
-                                .flatMap(provinceList1 -> {
-                                    DataSupport.saveAll(provinceList1);
-                                    return Observable.fromArray(provinceList1);
-                                });
+                    if (provinceList == null || provinceList.size() == 0) {
+                        if (NetWorkUtil.isNetworkConnected(CoolWeatherApp.getContext())) {
+                            return RetrofitUtil.create(ProvinceApi.class)
+                                    .query()
+                                    .map(provinceList12 ->
+                                            ModelUtil.addProvinceCodeAndNameToProvince(provinceList12)
+                                    )
+                                    .flatMap(provinceList1 -> {
+                                        DataSupport.saveAll(provinceList1);
+                                        return Observable.fromArray(provinceList1);
+                                    });
+                        }
+                        chooseAreaView.networkErrorView();
                     }
+                    return Observable.fromArray(provinceList);
                 })
                 .compose(RxSchedulersUtil.ioToMain())
                 .compose(RxLifecycleAndroid.bindFragment(subject))
                 .subscribe(provinces -> {
-                    chooseAreaView.loadProvinceData(provinces);
-                });
+                            chooseAreaView.loadProvinceData(provinces);
+                        }, throwable ->
+                                Logger.e(throwable, "cityError")
+                );
     }
 
     @Override
@@ -64,19 +72,21 @@ public class ChooseAreaPresenterImp implements ChooseAreaContract.ChooseAreaPres
                         .find(City.class)
         )
                 .flatMap(cityList0 -> {
-                    if (cityList0 != null && cityList0.size() > 0) {
-                        return Observable.fromArray(cityList0);
-                    } else {
-                        return RetrofitUtil.create(CityApi.class)
-                                .query(provinceId)
-                                .map(cityList12 ->
-                                        ModelUtil.addProvinceIdToCity(provinceId, cityList12)
-                                )
-                                .flatMap(cityList1 -> {
-                                    DataSupport.saveAll(cityList1);
-                                    return Observable.fromArray(cityList1);
-                                });
+                    if (cityList0 == null || cityList0.size() == 0) {
+                        if (NetWorkUtil.isNetworkConnected(CoolWeatherApp.getContext())) {
+                            return RetrofitUtil.create(CityApi.class)
+                                    .query(provinceId)
+                                    .map(cityList12 ->
+                                            ModelUtil.addProvinceIdToCity(provinceId, cityList12)
+                                    )
+                                    .flatMap(cityList1 -> {
+                                        DataSupport.saveAll(cityList1);
+                                        return Observable.fromArray(cityList1);
+                                    });
+                        }
+                        chooseAreaView.networkErrorView();
                     }
+                    return Observable.fromArray(cityList0);
                 })
                 .compose(RxSchedulersUtil.ioToMain())
                 .compose(RxLifecycleAndroid.bindFragment(subject))
@@ -96,24 +106,27 @@ public class ChooseAreaPresenterImp implements ChooseAreaContract.ChooseAreaPres
                         .find(County.class)
         )
                 .flatMap(cityList -> {
-                    Logger.i("" + provinceId + "+" + cityId);
-                    if (cityList != null && cityList.size() > 0) {
-                        return Observable.fromArray(cityList);
-                    } else {
-                        return RetrofitUtil.create(CountyApi.class)
-                                .query(provinceId, cityId)
-                                .map(counties -> ModelUtil.addCityIdToCounty(cityId, counties))
-                                .flatMap(countyList1 -> {
-                                    DataSupport.saveAllAsync(countyList1);
-                                    return Observable.fromArray(countyList1);
-                                });
+                    if (cityList == null || cityList.size() == 0) {
+                        if (NetWorkUtil.isNetworkConnected(CoolWeatherApp.getContext())) {
+                            return RetrofitUtil.create(CountyApi.class)
+                                    .query(provinceId, cityId)
+                                    .map(counties -> ModelUtil.addCityIdToCounty(cityId, counties))
+                                    .flatMap(countyList1 -> {
+                                        DataSupport.saveAll(countyList1);
+                                        return Observable.fromArray(countyList1);
+                                    });
+                        }
+                        chooseAreaView.networkErrorView();
                     }
+                    return Observable.fromArray(cityList);
                 })
                 .compose(RxSchedulersUtil.ioToMain())
                 .compose(RxLifecycleAndroid.bindFragment(subject))
                 .subscribe(countyList -> {
-                    chooseAreaView.loadCountyData(countyList);
-                });
+                            chooseAreaView.loadCountyData(countyList);
+                        }, throwable ->
+                                Logger.e(throwable, "cityError")
+                );
 
     }
 

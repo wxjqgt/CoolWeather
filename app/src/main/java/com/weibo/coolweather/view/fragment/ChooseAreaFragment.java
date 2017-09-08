@@ -1,5 +1,8 @@
 package com.weibo.coolweather.view.fragment;
 
+import android.content.Intent;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +15,7 @@ import com.trello.rxlifecycle2.android.FragmentEvent;
 import com.weibo.coolweather.Constant;
 import com.weibo.coolweather.R;
 import com.weibo.coolweather.adapter.recyclerview.CommonAdapter;
-import com.weibo.coolweather.adapter.recyclerview.OnRecyclerViewItemClickListener;
+import com.weibo.coolweather.adapter.recyclerview.OnRecyclerViewSimpleItemClickListener;
 import com.weibo.coolweather.adapter.recyclerview.ViewHolder;
 import com.weibo.coolweather.model.Area;
 import com.weibo.coolweather.model.db.City;
@@ -22,6 +25,8 @@ import com.weibo.coolweather.presenter.BasePresenter;
 import com.weibo.coolweather.presenter.ChooseAreaPresenterImp;
 import com.weibo.coolweather.presenter.contract.ChooseAreaContract;
 import com.weibo.coolweather.util.ModelUtil;
+import com.weibo.coolweather.view.activity.MainActivity;
+import com.weibo.coolweather.view.activity.WeatherActivity;
 
 import java.util.List;
 
@@ -35,6 +40,8 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContract.ChooseAreaView {
 
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
     @BindView(R.id.title_text)
     TextView titleText;
     @BindView(R.id.back_button)
@@ -46,14 +53,17 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
     //省列表
     private List<Province> provinceList = null;
     //市列表
-    private List<City> cityList = null;
+    private List<City> cityList;
     //县列表
-    private List<County> countyList = null;
+    private List<County> countyList;
     //当前选中的级别
-    String title = "中国";
-    private int currentLevel = Constant.AREA_LEVEL.LEVEL_PROVINCE;
-    private int currentCityId = 0;
-    private int currentCountyId = 0;
+    private Constant.AREA_LEVEL currentLevel;
+    private int currentProvinceId;
+    private int currrentSelectProvincePosition;
+    private int currrentSelectCityPosition;
+    private int areaPositionOffset = 4;
+    private String currentSelectProvinceName;
+    private String title = "中国";
 
     private ChooseAreaContract.ChooseAreaPresenter chooseAreaPresenter;
 
@@ -83,51 +93,31 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
         } else {
             adapter.setDatas(ModelUtil.convertProvince(provinceList));
         }
-        recyclerView.scrollToPosition(indexCity(currentCityId));
-    }
-
-    private int indexCity(int cityId) {
-        if (provinceList != null && provinceList.size() > 0) {
-            return 0;
-        }
-        int size = provinceList.size();
-        for (int i = 0; i < size; i++) {
-            if (provinceList.get(i).getId() == cityId) {
-                return i;
-            }
-        }
-        return 0;
+        recyclerView.scrollToPosition(currrentSelectProvincePosition);
     }
 
     @Override
     public void loadCityData(List<City> cityList) {
         this.cityList = cityList;
         adapter.setDatas(ModelUtil.convertCity(cityList));
-        recyclerView.scrollToPosition(indexCounty(currentCountyId));
-    }
-
-    private int indexCounty(int countyId) {
-        if (countyList != null && countyList.size() > 0) {
-            return 0;
-        }
-        int size = countyList.size();
-        for (int i = 0; i < size; i++) {
-            if (countyList.get(i).getId() == countyId) {
-                return i;
-            }
-        }
-        return 0;
+        recyclerView.scrollToPosition(currrentSelectCityPosition);
     }
 
     @Override
     public void loadCountyData(List<County> countyList) {
+        this.countyList = countyList;
         adapter.setDatas(ModelUtil.convertCounty(countyList));
         recyclerView.scrollToPosition(0);
     }
 
     @Override
+    public void loadWeatherData() {
+
+    }
+
+    @Override
     protected void listener() {
-        recyclerView.addOnItemTouchListener(new OnRecyclerViewItemClickListener(recyclerView) {
+        recyclerView.addOnItemTouchListener(new OnRecyclerViewSimpleItemClickListener(recyclerView) {
             @Override
             public void OnItemClickLitener(RecyclerView.ViewHolder viewHolder) {
                 if (viewHolder == null) {
@@ -135,20 +125,33 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
                 }
                 int position = viewHolder.getAdapterPosition();
                 switch (currentLevel) {
-                    case Constant.AREA_LEVEL.LEVEL_PROVINCE:
+                    case LEVEL_PROVINCE:
+                        adapter.clear();
                         Province province = provinceList.get(position);
                         chooseAreaPresenter.queryCity(province.getId());
                         title = province.getName();
-                        currentCityId = province.getProvinceCode();
+                        currentSelectProvinceName = province.getProvinceName();
+                        currrentSelectProvincePosition = position + areaPositionOffset;
+                        currentProvinceId = province.getProvinceCode();
                         currentLevel = Constant.AREA_LEVEL.LEVEL_CITY;
 
                         break;
-                    case Constant.AREA_LEVEL.LEVEL_CITY:
+                    case LEVEL_CITY:
+                        adapter.clear();
                         City city = cityList.get(position);
                         chooseAreaPresenter.queryCounty(city.getProvinceId(), city.getCityCode());
                         title = city.getName();
+                        currrentSelectCityPosition = position + areaPositionOffset;
                         currentLevel = Constant.AREA_LEVEL.LEVEL_COUNTY;
-                        currentCountyId = city.getCityCode();
+
+                        break;
+
+                    case LEVEL_COUNTY:
+                        County county = countyList.get(position);
+                        Intent intent = new Intent(context, WeatherActivity.class);
+                        intent.putExtra(Constant.WEATHER_ID,county.getWeather_id());
+                        startActivity(intent);
+                        ((MainActivity)context).finish();
 
                         break;
                     default:
@@ -158,24 +161,21 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
                 backButton.setVisibility(View.VISIBLE);
 
             }
-
-            @Override
-            public void OnItemLongClickLitener(RecyclerView.ViewHolder viewHolder) {
-            }
         });
     }
 
     @OnClick(R.id.back_button)
     public void onClick(View view) {
         switch (currentLevel) {
-            case Constant.AREA_LEVEL.LEVEL_CITY:
+            case LEVEL_CITY:
                 backButton.setVisibility(View.GONE);
                 chooseAreaPresenter.queryProvince();
                 currentLevel = Constant.AREA_LEVEL.LEVEL_PROVINCE;
 
                 break;
-            case Constant.AREA_LEVEL.LEVEL_COUNTY:
-                chooseAreaPresenter.queryCity(currentCityId);
+            case LEVEL_COUNTY:
+                titleText.setText(currentSelectProvinceName);
+                chooseAreaPresenter.queryCity(currentProvinceId);
                 currentLevel = Constant.AREA_LEVEL.LEVEL_CITY;
 
             default:
@@ -191,6 +191,13 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
             }
         };
         recyclerView.setAdapter(adapter);
+
+    }
+
+    @Override
+    public void networkErrorView() {
+
+        Snackbar.make(coordinatorLayout,"当前网络不通！",Snackbar.LENGTH_LONG).show();
 
     }
 

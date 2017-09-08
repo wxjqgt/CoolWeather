@@ -13,11 +13,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public final class RetrofitUtil {
 
     public static <T> T create(Class<T> mClass){
-        return RetrofitHelper.retrofit.create(mClass);
+        return RetrofitHelper.INSTANT.create(mClass);
     }
 
     private static class RetrofitHelper{
-        private static final Retrofit retrofit = new Retrofit.Builder()
+        private static final Retrofit INSTANT = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(Constant.URL.WEATHER_API_URL)
