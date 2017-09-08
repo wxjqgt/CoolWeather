@@ -18,11 +18,13 @@ public class WeatherActivityContract {
         //网络错误提示
         void networkErrorView();
         //获取生命周期管理
+        void viewBackgroundData(String imageUrl);
         BehaviorSubject<ActivityEvent> getLifecycle();
     }
 
     public interface WeatherActivityPresenter extends BasePresenter {
-        void initWeatherData(String weatherId);
+        void loadBackgroundData();
+        void loadWeatherData(String weatherId);
         void updateWeatherData(String weatherId);
     }
 }

@@ -12,14 +12,16 @@ import okhttp3.Response;
 public final class HttpRequestUtil {
 
     public static String requestString(String url) {
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
-
         try {
-            Response response = OkHttpUtil.getOkHttpClient().newCall(request).execute();
-            return response.body().string();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .get()
+                    .build();
+            Response response = OkHttpUtil.getOkHttpClient()
+                    .newCall(request)
+                    .execute();
+            String content = response.body().string();
+            return content;
         } catch (IOException e) {
             e.printStackTrace();
         }

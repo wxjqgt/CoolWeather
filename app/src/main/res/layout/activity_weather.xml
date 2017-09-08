@@ -7,7 +7,15 @@
     android:background="@color/colorPrimary"
     tools:context="com.weibo.coolweather.view.activity.WeatherActivity">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:id="@+id/image_backgroud"
+        />
+
     <ScrollView
+        android:fitsSystemWindows="true"
         android:id="@+id/weather_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
