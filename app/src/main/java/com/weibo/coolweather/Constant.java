@@ -7,6 +7,7 @@ package com.weibo.coolweather;
 public interface Constant {
 
     String WEATHER_ID = "weather_id";
+    String SP_NAME = "CoolWeather";
 
     interface URL {
         String WEATHER_API_URL = "http://guolin.tech/";

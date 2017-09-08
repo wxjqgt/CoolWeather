@@ -341,6 +341,22 @@ public class HeFengWeather {
     }
 
     public static class Suggestion {
+        public Comfort getComfort() {
+            return comfort;
+        }
+
+        public void setComfort(Comfort comfort) {
+            this.comfort = comfort;
+        }
+
+        public CarWash getCarWash() {
+            return carWash;
+        }
+
+        public void setCarWash(CarWash carWash) {
+            this.carWash = carWash;
+        }
+
         /**
          * air : {"brf":"中","txt":"气象条件对空气污染物稀释、扩散和清除无明显影响，易感人群应适当减少室外活动时间。"}
          * comf : {"brf":"较舒适","txt":"白天天气晴好，您在这种天气条件下，会感觉早晚凉爽、舒适，午后偏热。"}
@@ -487,6 +503,22 @@ public class HeFengWeather {
 
         public void setDate(String date) {
             this.date = date;
+        }
+
+        public More getMore() {
+            return more;
+        }
+
+        public void setMore(More more) {
+            this.more = more;
+        }
+
+        public Temperature getTmperature() {
+            return tmperature;
+        }
+
+        public void setTmperature(Temperature tmperature) {
+            this.tmperature = tmperature;
         }
 
         public static class More {

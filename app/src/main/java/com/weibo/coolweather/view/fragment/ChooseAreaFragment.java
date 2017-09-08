@@ -111,11 +111,6 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
     }
 
     @Override
-    public void loadWeatherData() {
-
-    }
-
-    @Override
     protected void listener() {
         recyclerView.addOnItemTouchListener(new OnRecyclerViewSimpleItemClickListener(recyclerView) {
             @Override
@@ -149,9 +144,9 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
                     case LEVEL_COUNTY:
                         County county = countyList.get(position);
                         Intent intent = new Intent(context, WeatherActivity.class);
-                        intent.putExtra(Constant.WEATHER_ID,county.getWeather_id());
+                        intent.putExtra(Constant.WEATHER_ID, county.getWeather_id());
                         startActivity(intent);
-                        ((MainActivity)context).finish();
+                        ((MainActivity) context).finish();
 
                         break;
                     default:
@@ -197,7 +192,7 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
     @Override
     public void networkErrorView() {
 
-        Snackbar.make(coordinatorLayout,"当前网络不通！",Snackbar.LENGTH_LONG).show();
+        Snackbar.make(coordinatorLayout, "当前网络不通！", Snackbar.LENGTH_LONG).show();
 
     }
 
