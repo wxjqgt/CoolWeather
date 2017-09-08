@@ -3,6 +3,7 @@ package com.weibo.coolweather.view.activity;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.weibo.coolweather.model.HeFengWeather;
 import com.weibo.coolweather.presenter.BasePresenter;
 import com.weibo.coolweather.presenter.WeatherActivityPresenterImp;
 import com.weibo.coolweather.presenter.contract.WeatherActivityContract;
+import com.weibo.coolweather.util.ImageLoader;
 
 import butterknife.BindView;
 import io.reactivex.subjects.BehaviorSubject;
@@ -43,9 +45,10 @@ public class WeatherActivity extends BaseActivity implements WeatherActivityCont
     TextView sportText;
     @BindView(R.id.weather_layout)
     ScrollView weatherLayout;
+    @BindView(R.id.image_backgroud)
+    ImageView image_background;
 
     private WeatherActivityContract.WeatherActivityPresenter weatherActivityPresenter;
-
 
     @Override
     protected void loadData() {
@@ -53,39 +56,59 @@ public class WeatherActivity extends BaseActivity implements WeatherActivityCont
         Intent intent = getIntent();
         if (intent != null) {
             String weatherId = intent.getStringExtra(Constant.WEATHER_ID);
-            weatherActivityPresenter.initWeatherData(weatherId);
+            weatherActivityPresenter.loadWeatherData(weatherId);
         }
+        weatherActivityPresenter.loadBackgroundData();
     }
 
     @Override
     public void viewWeatherData(HeFengWeather heFengWeather) {
         weatherLayout.setVisibility(View.GONE);
+
         titleCity.setText(heFengWeather.getBasic().getCityName());
         titleUpdateTime.setText(heFengWeather.getBasic().getUpdate().getUpdateTime());
+
         degreeText.setText(heFengWeather.getNow().getTemperature() + "°C");
         weatherInfoText.setText(heFengWeather.getNow().getMore().getInfo());
+
         comfortText.setText("舒适度: " + heFengWeather.getSuggestion().getComfort().getInfo());
         carWashText.setText("洗车指数: " + heFengWeather.getSuggestion().getCarWash().getInfo());
         sportText.setText("运动建议: " + heFengWeather.getSuggestion().getSport().getInfo());
+
+        String apiInfo = "0";
+        String pm25Info = "0";
         if (heFengWeather.getAqi() != null) {
-            apiText.setText(heFengWeather.getAqi().getCity().getAqi());
-            pm25Text.setText(heFengWeather.getAqi().getCity().getPm25());
+            apiInfo = heFengWeather.getAqi().getCity().getAqi();
+            pm25Info = heFengWeather.getAqi().getCity().getAqi();
         }
+        apiText.setText(apiInfo);
+        pm25Text.setText(pm25Info);
+
         forecastLayout.removeAllViews();
         for (HeFengWeather.DailyForecast dailyForecast : heFengWeather.getDaily_forecast()) {
             View view = LayoutInflater.from(WeatherActivity.this)
                     .inflate(R.layout.forecast_item, forecastLayout, false);
+
             TextView dateText = (TextView) view.findViewById(R.id.date_text);
             TextView infoText = (TextView) view.findViewById(R.id.info_text);
             TextView maxText = (TextView) view.findViewById(R.id.max_text);
             TextView minText = (TextView) view.findViewById(R.id.min_text);
+
             dateText.setText(dailyForecast.getDate());
             infoText.setText(dailyForecast.getMore().getInfo());
             maxText.setText(dailyForecast.getTmperature().getMax());
             minText.setText(dailyForecast.getTmperature().getMin());
+
             forecastLayout.addView(view);
         }
+
         weatherLayout.setVisibility(View.VISIBLE);
+
+    }
+
+    @Override
+    public void viewBackgroundData(String imageUrl) {
+        ImageLoader.load(this, imageUrl, image_background);
     }
 
     @Override
@@ -107,4 +130,5 @@ public class WeatherActivity extends BaseActivity implements WeatherActivityCont
     public BehaviorSubject<ActivityEvent> getLifecycle() {
         return lifecycleSubject;
     }
+
 }

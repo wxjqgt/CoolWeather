@@ -10,6 +10,7 @@ public interface Constant {
     String SP_NAME = "CoolWeather";
 
     interface URL {
+        String BING_PIC = "http://guolin.tech/api/bing_pic";
         String WEATHER_API_URL = "http://guolin.tech/";
         String KEY = "55725f617c3b41788c138e29270d328c";
 
