@@ -42,17 +42,18 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
-    private CommonAdapter<Area> adapter;
+    private CommonAdapter<Area> adapter = null;
     //省列表
-    private List<Province> provinceList;
+    private List<Province> provinceList = null;
     //市列表
-    private List<City> cityList;
-    private List<County> countyList;
+    private List<City> cityList = null;
+    //县列表
+    private List<County> countyList = null;
     //当前选中的级别
     String title = "中国";
-    private int currentLevel;
-    private int currentCityId;
-    private int currentCountyId;
+    private int currentLevel = Constant.AREA_LEVEL.LEVEL_PROVINCE;
+    private int currentCityId = 0;
+    private int currentCountyId = 0;
 
     private ChooseAreaContract.ChooseAreaPresenter chooseAreaPresenter;
 
@@ -86,6 +87,9 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
     }
 
     private int indexCity(int cityId) {
+        if (provinceList != null && provinceList.size() > 0) {
+            return 0;
+        }
         int size = provinceList.size();
         for (int i = 0; i < size; i++) {
             if (provinceList.get(i).getId() == cityId) {
@@ -103,6 +107,9 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
     }
 
     private int indexCounty(int countyId) {
+        if (countyList != null && countyList.size() > 0) {
+            return 0;
+        }
         int size = countyList.size();
         for (int i = 0; i < size; i++) {
             if (countyList.get(i).getId() == countyId) {
