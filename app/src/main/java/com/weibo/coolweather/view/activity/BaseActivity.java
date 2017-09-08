@@ -36,7 +36,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
     protected void lisener() {
     }
 
-    private final BehaviorSubject<ActivityEvent> lifecycleSubject = BehaviorSubject.create();
+    protected final BehaviorSubject<ActivityEvent> lifecycleSubject = BehaviorSubject.create();
 
     @Override
     @NonNull

@@ -5,5 +5,5 @@ package com.weibo.coolweather.presenter;
  */
 
 public interface BaseView {
-    void setPresenter(BasePresenter presenter);
+    void setPresenter(BasePresenter basePresenter);
 }

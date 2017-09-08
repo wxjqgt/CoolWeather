@@ -1,23 +1,25 @@
 package com.weibo.coolweather.view.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.orhanobut.logger.Logger;
+import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.weibo.coolweather.Constant;
 import com.weibo.coolweather.R;
-import com.weibo.coolweather.api.WeatherApi;
-import com.weibo.coolweather.util.NetWorkUtil;
-import com.weibo.coolweather.util.RetrofitUtil;
-import com.weibo.coolweather.util.RxSchedulersUtil;
+import com.weibo.coolweather.model.HeFengWeather;
+import com.weibo.coolweather.presenter.BasePresenter;
+import com.weibo.coolweather.presenter.WeatherActivityPresenterImp;
+import com.weibo.coolweather.presenter.contract.WeatherActivityContract;
 
 import butterknife.BindView;
+import io.reactivex.subjects.BehaviorSubject;
 
-public class WeatherActivity extends BaseActivity {
+public class WeatherActivity extends BaseActivity implements WeatherActivityContract.WeatherActivityView {
 
     @BindView(R.id.title_city)
     TextView titleCity;
@@ -42,25 +44,67 @@ public class WeatherActivity extends BaseActivity {
     @BindView(R.id.weather_layout)
     ScrollView weatherLayout;
 
+    private WeatherActivityContract.WeatherActivityPresenter weatherActivityPresenter;
+
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void loadData() {
+        new WeatherActivityPresenterImp(this);
         Intent intent = getIntent();
         if (intent != null) {
-            String weather_Id = intent.getStringExtra(Constant.WEATHER_ID);
-            if (NetWorkUtil.isNetworkConnected(this)) {
-                RetrofitUtil.create(WeatherApi.class)
-                        .query(weather_Id,Constant.URL.KEY)
-
-                        .compose(bindToLifecycle())
-                        .compose(RxSchedulersUtil.ioToMain())
-                        .subscribe(weaTher -> Logger.d(weaTher));
-            }
+            String weatherId = intent.getStringExtra(Constant.WEATHER_ID);
+            weatherActivityPresenter.initWeatherData(weatherId);
         }
+    }
+
+    @Override
+    public void viewWeatherData(HeFengWeather heFengWeather) {
+        weatherLayout.setVisibility(View.GONE);
+        titleCity.setText(heFengWeather.getBasic().getCityName());
+        titleUpdateTime.setText(heFengWeather.getBasic().getUpdate().getUpdateTime());
+        degreeText.setText(heFengWeather.getNow().getTemperature() + "°C");
+        weatherInfoText.setText(heFengWeather.getNow().getMore().getInfo());
+        comfortText.setText("舒适度: " + heFengWeather.getSuggestion().getComfort().getInfo());
+        carWashText.setText("洗车指数: " + heFengWeather.getSuggestion().getCarWash().getInfo());
+        sportText.setText("运动建议: " + heFengWeather.getSuggestion().getSport().getInfo());
+        if (heFengWeather.getAqi() != null) {
+            apiText.setText(heFengWeather.getAqi().getCity().getAqi());
+            pm25Text.setText(heFengWeather.getAqi().getCity().getPm25());
+        }
+        forecastLayout.removeAllViews();
+        for (HeFengWeather.DailyForecast dailyForecast : heFengWeather.getDaily_forecast()) {
+            View view = LayoutInflater.from(WeatherActivity.this)
+                    .inflate(R.layout.forecast_item, forecastLayout, false);
+            TextView dateText = (TextView) view.findViewById(R.id.date_text);
+            TextView infoText = (TextView) view.findViewById(R.id.info_text);
+            TextView maxText = (TextView) view.findViewById(R.id.max_text);
+            TextView minText = (TextView) view.findViewById(R.id.min_text);
+            dateText.setText(dailyForecast.getDate());
+            infoText.setText(dailyForecast.getMore().getInfo());
+            maxText.setText(dailyForecast.getTmperature().getMax());
+            minText.setText(dailyForecast.getTmperature().getMin());
+            forecastLayout.addView(view);
+        }
+        weatherLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void networkErrorView() {
+        Toast.makeText(this, "当前网络不通！", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void setPresenter(BasePresenter basePresenter) {
+        weatherActivityPresenter = (WeatherActivityContract.WeatherActivityPresenter) basePresenter;
     }
 
     @Override
     protected int getLayoutId() {
         return R.layout.activity_weather;
+    }
+
+    @Override
+    public BehaviorSubject<ActivityEvent> getLifecycle() {
+        return lifecycleSubject;
     }
 }
