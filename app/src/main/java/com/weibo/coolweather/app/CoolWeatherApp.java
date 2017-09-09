@@ -19,9 +19,13 @@ public class CoolWeatherApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        context = getApplicationContext();
+        setContext(getApplicationContext());
         Logger.addLogAdapter(new AndroidLogAdapter());
         LitePal.initialize(this);
+    }
+
+    public static void setContext(Context mContext){
+        context = mContext;
     }
 
     public static Context getContext() {

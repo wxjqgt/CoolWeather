@@ -1,14 +1,18 @@
 package com.weibo.coolweather.view.activity;
 
-import android.content.Intent;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jakewharton.rxbinding2.view.RxView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.weibo.coolweather.Constant;
 import com.weibo.coolweather.R;
@@ -17,6 +21,7 @@ import com.weibo.coolweather.presenter.BasePresenter;
 import com.weibo.coolweather.presenter.WeatherActivityPresenterImp;
 import com.weibo.coolweather.presenter.contract.WeatherActivityContract;
 import com.weibo.coolweather.util.ImageLoader;
+import com.weibo.coolweather.util.SPUtil;
 
 import butterknife.BindView;
 import io.reactivex.subjects.BehaviorSubject;
@@ -47,18 +52,46 @@ public class WeatherActivity extends BaseActivity implements WeatherActivityCont
     ScrollView weatherLayout;
     @BindView(R.id.image_backgroud)
     ImageView image_background;
+    @BindView(R.id.drawbleLayout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.home)
+    Button home;
 
     private WeatherActivityContract.WeatherActivityPresenter weatherActivityPresenter;
+    private String weatherId;
 
     @Override
     protected void loadData() {
         new WeatherActivityPresenterImp(this);
-        Intent intent = getIntent();
-        if (intent != null) {
-            String weatherId = intent.getStringExtra(Constant.WEATHER_ID);
-            weatherActivityPresenter.loadWeatherData(weatherId);
-        }
         weatherActivityPresenter.loadBackgroundData();
+        weatherId = SPUtil.getString(Constant.LAST_WEATHER_ID);
+        if (weatherId.equals("")) {
+            weatherId = "CN101010100";
+        }
+        weatherActivityPresenter.loadWeatherData(weatherId);
+    }
+
+    @Override
+    protected void lisener() {
+        RxView.clicks(home)
+                .compose(bindToLifecycle())
+                .subscribe(o -> drawerLayout.openDrawer(Gravity.START));
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            weatherActivityPresenter.updateWeatherData(weatherId);
+        });
+    }
+
+    public void closeDrawerLayout() {
+        drawerLayout.closeDrawers();
+    }
+
+    public void updateWeatherData(String weatherId) {
+        this.weatherId = weatherId;
+        SPUtil.putString(Constant.LAST_WEATHER_ID, weatherId);
+        weatherActivityPresenter.updateWeatherData(weatherId);
     }
 
     @Override
@@ -104,6 +137,7 @@ public class WeatherActivity extends BaseActivity implements WeatherActivityCont
 
         weatherLayout.setVisibility(View.VISIBLE);
 
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

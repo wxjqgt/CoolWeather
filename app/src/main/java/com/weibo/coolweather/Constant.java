@@ -6,7 +6,8 @@ package com.weibo.coolweather;
 
 public interface Constant {
 
-    String WEATHER_ID = "weather_id";
+    String WEATHER_DATA = "weather_data";
+    String LAST_WEATHER_ID = "last_weather_id";
     String SP_NAME = "CoolWeather";
 
     interface URL {

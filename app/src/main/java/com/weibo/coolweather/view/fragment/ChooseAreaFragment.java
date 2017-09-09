@@ -1,6 +1,5 @@
 package com.weibo.coolweather.view.fragment;
 
-import android.content.Intent;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -25,7 +24,6 @@ import com.weibo.coolweather.presenter.BasePresenter;
 import com.weibo.coolweather.presenter.ChooseAreaPresenterImp;
 import com.weibo.coolweather.presenter.contract.ChooseAreaContract;
 import com.weibo.coolweather.util.ModelUtil;
-import com.weibo.coolweather.view.activity.MainActivity;
 import com.weibo.coolweather.view.activity.WeatherActivity;
 
 import java.util.List;
@@ -143,10 +141,9 @@ public class ChooseAreaFragment extends BaseFragment implements ChooseAreaContra
 
                     case LEVEL_COUNTY:
                         County county = countyList.get(position);
-                        Intent intent = new Intent(context, WeatherActivity.class);
-                        intent.putExtra(Constant.WEATHER_ID, county.getWeather_id());
-                        startActivity(intent);
-                        ((MainActivity) context).finish();
+                        WeatherActivity weatherActivity = (WeatherActivity) context;
+                        weatherActivity.updateWeatherData(county.getWeather_id());
+                        weatherActivity.closeDrawerLayout();
 
                         break;
                     default:
