@@ -10,7 +10,6 @@ import okhttp3.Response;
  */
 
 public final class HttpRequestUtil {
-
     public static String requestString(String url) {
         try {
             Request request = new Request.Builder()
@@ -27,5 +26,4 @@ public final class HttpRequestUtil {
         }
         return "";
     }
-
 }
